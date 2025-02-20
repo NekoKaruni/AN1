@@ -1,6 +1,23 @@
+---
+title: "東証スタンダード市場_企業分析"
+author: "Karuni"
+date: "2025-02-20"
+css: Font.css
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+### データ分析
+```{r}
 ##使用パッケージ
 library(tidyverse)
+library(dplyr)
 library(gt)
+library(ggplot2)
 
 ##データ
 df <- read_csv("1376_financial.csv")
@@ -150,7 +167,10 @@ df|>
              `Net Income From Continuing Operations_cf` = "継続事業からの純利益",  
              `Stock_Price` = "株価",  
   )
-    
+```
+### 損益計算書
+```{r}
+#損益計算書df
 
 PL_df <- df |> 
   select(`Unnamed: 0_bs`, `Total Revenue_is`, `Operating Income_is`, `Net Income_is`)
@@ -182,7 +202,4 @@ PL_df_lo |>
        y = "金額",
        fill = "利益") +
   theme_minimal()
-
-
-
-
+```
