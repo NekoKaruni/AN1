@@ -1,6 +1,10 @@
 ##使用パッケージ
 library(tidyverse)
 library(gt)
+library(dplyr)
+library(ggplot2)
+
+
 
 ##データ
 df <- read_csv("1376_financial.csv")
@@ -8,6 +12,7 @@ df <- read_csv("1376_financial.csv")
 ##列名変更　表出力
 df|>
   gt() |> 
+  sub_missing(columns = everything(), missing_text = "") |> 
   cols_label(`Unnamed: 0_bs` = "Year",
              `Treasury Shares Number_bs` = "自己株式の数",  
              `Ordinary Shares Number_bs` = "普通株式の数",  
@@ -164,6 +169,7 @@ PL_df_lo <- PL_df |>
 PL_df_lo <- rename(PL_df_lo, Year=`Unnamed: 0_bs`)
 PL_df_lo <- PL_df_lo |> 
   filter(!is.na(Year))
+  
 
 PL_df_lo <- PL_df_lo |> 
   mutate(Year = substr(Year,1,4))
@@ -183,6 +189,25 @@ PL_df_lo |>
        fill = "利益") +
   theme_minimal()
 
+PBR_PER_df <- 
+  select(df,Year = `Unnamed: 0_bs`, Share_Issued = `Share Issued_bs`, Stock_Price = `Stock_Price` , Net_income = `Net Income_is` , Stock_Equity = `Stockholders Equity_bs`) |> 
+  filter(!is.na(Year)) |> 
+  mutate(PBR = Stock_Price /(Stock_Equity / Share_Issued),
+         PER = Stock_Price / (Net_income / Share_Issued))
 
+PBR_PER_df_long <- 
+  select(PBR_PER_df, Year , PBR , PER) |> 
+  pivot_longer(cols = -Year,
+               names_to = "PBR_PER",
+               values_to = "value")
 
+PBR_PER_df_long |> 
+  ggplot(aes(x = Year , y = value, color = PBR_PER)) +
+  geom_line() +
+  labs(title = "PBR・PERの推移",
+       x = "年度" ,
+       y = "倍率" ,
+       fill = "指標") +
+  theme_minimal()
 
+  
