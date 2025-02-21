@@ -7,7 +7,7 @@ library(ggplot2)
 
 
 ##データ
-df <- read_csv("1376_financial.csv")
+df <- read_csv("data/1376_financial.csv")
 
 ##列名変更　表出力
 df|>
